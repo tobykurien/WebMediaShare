@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string translatable="false" name="dbInitialize">
+        create table webapps (
+           id integer primary key,
+           name text not null,
+           url text not null,
+           iconUrl text not null,
+           fontSize integer default -1,
+           userAgent text,
+           certIssuedBy text,
+           certIssuedTo text,
+           certValidFrom text,
+           certValidTo text,
+           certHash text,
+           cookies text
+        );
+        
+        create table domain_names (
+           id integer primary key,
+           webappId integer not null,
+           domain text not null
+        );
+        
+        insert into webapps (name,url,iconUrl) values (\'YouTube\',\'https://youtube.com\',\'\');
+        insert into webapps (name,url,iconUrl) values (\'Reddit\',\'https://www.reddit.com\',\'\');
+    </string>
+
+    <string translatable="false" name="dbGetWebapps">
+        select * from webapps
+        order by name asc
+    </string>
+
+    <string translatable="false" name="dbGetDomainNames">
+        select * from domain_names
+        where webappId = #webappId#
+    </string>
+
+    <string translatable="false" name="dbDeleteDomains">
+        delete from domain_names
+        where webappId = #webappId#
+    </string>
+</resources>

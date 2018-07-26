@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:title="@string/title_3rd_party"
+        android:summary="@string/summary_3rd_party"
+        android:defaultValue="true"
+        android:key="block3rd_party"/>    
+
+    <ListPreference
+        android:title="@string/title_font_size"
+        android:summary="@string/summary_font_size"
+        android:entries="@array/text_sizes"
+        android:entryValues="@array/text_size_values"
+        android:defaultValue="2"
+        android:key="font_size"
+        android:persistent="true" />    
+
+    <ListPreference
+        android:title="@string/title_user_agent"
+        android:summary="@string/summary_user_agent"
+        android:defaultValue=""
+        android:entries="@array/user_agents"
+        android:entryValues="@array/user_agent_strings"
+        android:key="user_agent"
+        android:persistent="true" />
+
+    <CheckBoxPreference
+        android:title="@string/title_fullscreen"
+        android:summary="@string/summary_fullscreen"
+        android:defaultValue="false"
+        android:key="fullscreen"/>
+
+    <CheckBoxPreference
+        android:title="@string/title_fullscreen_immersive"
+        android:summary="@string/summary_fullscreen_immersive"
+        android:defaultValue="false"
+        android:key="fullscreen_immersive"
+        android:dependency="fullscreen"/>
+
+    <CheckBoxPreference
+        android:title="@string/title_autohide"
+        android:summary="@string/summary_autohide"
+        android:defaultValue="true"
+        android:key="hide_actionbar"/>     
+
+    <CheckBoxPreference
+        android:title="@string/title_hide_actionbar"
+        android:summary="@string/summary_hide_actionbar"
+        android:defaultValue="false"
+        android:key="full_hide_actionbar"/>     
+
+    <CheckBoxPreference
+        android:title="@string/title_shortcut_actionbar"
+        android:summary="@string/summary_shortcut_actionbar"
+        android:defaultValue="false"
+        android:key="full_hide_shortcut_only"
+        android:dependency="full_hide_actionbar"/>     
+
+</PreferenceScreen>

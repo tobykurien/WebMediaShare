@@ -1,0 +1,12 @@
+bin
+gen
+.gradle
+build
+xtend-gen
+keystore.properties
+aarDependencies
+/libs/
+/.settings
+*~
+/local.properties
+.idea

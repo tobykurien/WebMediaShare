@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_stop"
+        android:icon="@drawable/ic_action_stop"
+        android:title="@string/menu_stop"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_3rd_party"
+        android:icon="@drawable/ic_action_3rd_party"
+        android:title="@string/menu_3rd_party"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_image"
+        android:icon="@drawable/ic_action_image"
+        android:title="@string/menu_toggle_image"
+        app:showAsAction="always"/>
+        
+    <item
+        android:id="@+id/menu_font_size"
+        android:icon="@drawable/ic_format_size"
+        android:title="@string/menu_text_size"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_action_save"
+        android:title="@string/menu_save"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_share"
+        android:icon="@drawable/ic_action_share"
+        android:title="@string/menu_share"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_shortcut"
+        android:icon="@drawable/ic_action_shortcut"
+        android:title="@string/menu_shortcut"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_user_agent"
+        android:icon="@drawable/ic_action_user_agent"
+        android:title="@string/menu_user_agent"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_certificate"
+        android:icon="@drawable/ic_action_certificate"
+        android:title="@string/menu_certificate"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/menu_settings"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_exit"
+        android:icon="@drawable/ic_action_exit"
+        android:title="@string/menu_exit"
+        app:showAsAction="ifRoom"/>
+</menu>

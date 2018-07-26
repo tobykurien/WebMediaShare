@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--
+		Copyright (C) 2015, Nicola Spanti (also known as RyDroid) <dev@nicola-spanti.info>
+		
+		Copying and distribution of this file, with or without modification,
+		are permitted in any medium without royalty provided the copyright
+		notice and this notice are preserved.  This file is offered as-is,
+		without any warrant.
+	-->
+	
+    <string name="menu_site">Changer de site</string>
+    <string name="menu_exit">Quitter</string>
+    <string name="menu_text_size">Taille de police</string>
+    <string name="menu_stop">Arrêter</string>
+    <string name="menu_refresh">Rafraichir</string>
+    <string name="menu_toggle_image">Changer d\'image</string>
+    <string name="menu_settings">Paramètres</string>
+    <string name="menu_3rd_party">Bloquer les domaines tiers</string>
+    <string name="menu_open_url">Ouvrir l\'URL</string>
+    <string name="open_url_hint">site-web.fr</string>
+    <string name="open_url">Ouvrir l\'URL</string>
+    <string name="menu_save">Sauvegarder comme WebApp</string>
+    <string name="blocked_root_domains">Bloqué les domaines racines</string>
+    <string name="unblock">Débloquer</string>
+    <string name="title_save_webapp">Sauvegarder la WebApp</string>
+    <string name="msg_save_webapp">Sauvegarder le site web actuel comme WebbApp ?</string>
+    <string name="btn_save">open_url_hint</string>
+    <string name="webapp_name">Nom de la WebApp</string>
+    <string name="open_site">Ouvrir le site web</string>
+    <string name="delete_webapp">Supprimer la WebApp ?</string>
+
+    <string name="err_invalid_url">URL invalide</string>
+    <string name="msg_saving_webapp">Sauvegarde de la webapp</string>
+    <string name="shortcut_label">Raccourci pour la webapp</string>
+
+    <string name="action_tips">Astuces</string>
+    <string name="tips"><![CDATA[
+        <p><b>Domaines tiers</b> : is un site parrait cassé, essayez d\'activer quelques domaines tiers dont le site pourraient dépendre, comme. <i>fbcdn.net</i> pour <i>Facebook</i></p>
+        <p><b>Raccourcis de l\'écran d\'accueil</b> : Faites un appui long sur l\'écran d\'accueil pour accéder aux widgets pour ajouter un raccourci vers une webapp sur l\'écran d\'accueil</p>
+        <p><b>Appui long sur les liens</b> : Faites un appui long sur un lien sur un site web pour choisir comment l\'ouvrir</p>
+]]></string>
+    <string name="err_webapp_not_found">Webapp pas trouvé</string>
+    <string name="menu_share">Partager l\'URL</string>
+    <string name="menu_shortcut">Raccourci</string>
+    <string name="msg_shortcut_added">Raccourci ajouté</string>
+</resources>
