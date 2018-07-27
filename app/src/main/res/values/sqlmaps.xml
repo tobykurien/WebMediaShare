@@ -5,7 +5,6 @@
            id integer primary key,
            name text not null,
            url text not null,
-           iconUrl text not null,
            fontSize integer default -1,
            userAgent text,
            certIssuedBy text,
@@ -22,8 +21,10 @@
            domain text not null
         );
         
-        insert into webapps (name,url,iconUrl) values (\'YouTube\',\'https://youtube.com\',\'\');
-        insert into webapps (name,url,iconUrl) values (\'Reddit\',\'https://www.reddit.com\',\'\');
+        insert into webapps (name,url) values (\'SuperSport\',\'https://www.supersport.com\');
+        insert into webapps (name,url) values (\'Reddit\',\'https://www.reddit.com\');
+        insert into webapps (name,url) values (\'Radio.net\',\'https://www.radio.net\');
+        insert into webapps (name,url) values (\'SoundCloud\',\'https://www.soundcloud.com\');
     </string>
 
     <string translatable="false" name="dbGetWebapps">

@@ -28,9 +28,14 @@ import java.util.HashMap
 import java.util.Set
 
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
+import static extension org.xtendroid.utils.AsyncBuilder.*
+
 import com.tobykurien.webmediashare.db.DbService
 import android.content.Context
 import android.webkit.WebResourceRequest
+import java.net.URLConnection
+import java.net.URL
+import java.util.List
 
 class WebClient extends WebViewClient {
 	public static val UNKNOWN_HOST = "999.999.999.999" // impossible hostname to avoid vuln
@@ -89,41 +94,20 @@ class WebClient extends WebViewClient {
 	}
 
 	override boolean shouldOverrideUrlLoading(WebView view, String url) {
-		val Uri uri = getLoadUri(Uri.parse(url))
-
-		try {
-			if (uri.path.contains(".")) {
-				var media = #[
-					// playlists
-					".m3u8",".m3u",".pls",
-					// video
-					".mp4",".mpeg",".webm",".vp9",".ogv",".mkv",".avi",".gifv",
-					// audio
-					".aac", ".ogg", ".mp3", ".m4a"
-				].exists[ uri.path.endsWith(it) ]
-
-				if (media) {
-					Log.d("CAST", "Found media " + url)
-					var i = new Intent(Intent.ACTION_SEND);
-					i.setType("text/plain")
-					i.putExtra(Intent.EXTRA_TEXT, url);
-					i.putExtra(Intent.EXTRA_STREAM, uri);
-					i.putExtra(Intent.EXTRA_SUBJECT, "Media");
-					i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-					var chooser = Intent.createChooser(i, view.context.getString(R.string.title_open_with))
-					if (i.resolveActivity(view.context.getPackageManager()) != null) {
-						view.context.startActivity(chooser);
-					}
-
-					return true
-				}
-			}
-		} catch (Exception e) {
-			Log.d("CAST", e.class.simpleName + " " + e.message)
-		}
-
 		return super.shouldOverrideUrlLoading(view, url)
+	}
+
+	def shareUrl(Context context, Uri uri) {
+		var i = new Intent(Intent.ACTION_SEND);
+		i.setType("text/plain")
+		i.putExtra(Intent.EXTRA_TEXT, uri.toString());
+		i.putExtra(Intent.EXTRA_SUBJECT, uri.host);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		var chooser = Intent.createChooser(i, uri.host + uri.path)
+		if (i.resolveActivity(context.getPackageManager()) != null) {
+			context.startActivity(chooser);
+		}
 	}
 
 	def static handleExternalLink(Context activity, Uri uri, boolean openInExternalApp) {
@@ -167,6 +151,54 @@ class WebClient extends WebViewClient {
 				Log.d("url_loading", "Opening registered webapp for " + uri.toString)
 				openWebapp(activity, webapps.get(0), uri)
 			}
+		}
+	}
+
+	override onLoadResource(WebView view, String url) {
+		val Uri uri = Uri.parse(url)
+
+		try {
+			if (uri.path.contains(".")) {
+				var media = #[
+					// playlists
+					".m3u8",".m3u",".pls",
+					// video
+					".mp4",".mpv",".mpeg",".webm",".vp9",".ogv",".mkv",".avi",".gifv",
+					// audio
+					".aac", ".ogg", ".mp3", ".m4a"
+				].exists[ uri.path.endsWith(it) ]
+
+				if (media) {
+					Log.d("CAST", "Found media " + url)
+					shareUrl(view.context, uri)
+				}
+			} else {
+				// check the content type for playable media
+				async() [
+					var URLConnection con = new URL(url).openConnection()
+					if (activity.settings.userAgent != null &&
+							activity.settings.userAgent.trim().length > 0) {
+						// User-agent may affect site redirects
+						con.setRequestProperty("User-Agent", activity.settings.userAgent)
+					}
+					con.connect()
+					return #[ con.getContentType(), con.getContentLengthLong(), con.getURL() ]
+				].then[ List result |
+					val contentType = result.get(0) as String
+					val contentLength = result.get(1) as Long
+					val url2 = result.get(2) as URL
+
+					if (contentType.startsWith("video/") || contentType.startsWith("audio/")) {
+						Log.d("CAST", result.toString() + ": " + url2)
+						shareUrl(view.context, Uri.parse(url2.toString))
+					}
+				].onError[ error |
+					// ignore errors
+					Log.e("CAST", "error", error)
+				].start()
+			}
+		} catch (Exception e) {
+			Log.d("CAST", e.class.simpleName + " " + e.message)
 		}
 	}
 
@@ -308,24 +340,13 @@ class WebClient extends WebViewClient {
 	 * @return
 	 */
 	def public static boolean isInSandbox(Uri uri, Set<String> domainUrls) {
-		if("data".equals(uri.getScheme()) || "blob".equals(uri.getScheme())) return true
-		var String host = uri.getHost()
-		if (host == null) return true;
-
-		for (String sites : domainUrls) {
-			for (String site : sites.split(" ")) {
-				if (site != null && host.toLowerCase().endsWith(site.toLowerCase())) {
-					return true
-				}
-
-			}
-
-		}
-		return false
+		// unlike WebApps, we allow all 3rd party requests
+		return true
 	}
 
 	def protected boolean isInSandbox(Uri uri) {
-		return isInSandbox(uri, domainUrls)
+		// unlike WebApps, we allow all 3rd party requests
+		return true;
 	}
 
 	def Set<String> getBlockedHosts() {

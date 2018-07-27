@@ -77,7 +77,7 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 			if (url.trim().length == 0) throw new Exception();
 
 		    if (!url.contains("://")) {
-				uri = Uri.parse("https://" + url)
+				uri = Uri.parse("http://" + url)
 			}
 		} catch (Exception e) {
 			Log.e("dlgOpenUrl", "Error opening url", e)
@@ -85,58 +85,11 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 		}
 
 		// When opening a new URL, let's follow all redirects to get to the final destination
-		val originalUri = uri
-		val pd = new ProgressDialog(activity)
-		pd.setMessage(activity.getString(R.string.progress_opening_site))
-
-		async(pd) [
-			var URLConnection con = new URL(originalUri.toString()).openConnection()
-			if (activity.settings.userAgent != null && 
-				activity.settings.userAgent.trim().length > 0) {
-				// User-agent may affect site redirects
-				con.setRequestProperty("User-Agent", activity.settings.userAgent)
-			}
-			con.connect()
-			var InputStream is = con.getInputStream()
-			var finalUrl = con.getURL()
-			is.close()
-			return finalUrl.toString()	
-		].then [ result |
-			if (!pd.isShowing) return; // user cancelled
-
-			var Uri uriFinal = null
-			if (!result.equals(originalUri.toString())) {
-				uriFinal = Uri.parse(result)
-			} else {
-				uriFinal = originalUri
-			}
-
-			if (!uriFinal.getScheme().equals("https")) {
-				// force it to https
-				var builder = uriFinal.buildUpon()
-				builder.scheme("https")
-				uriFinal = builder.build()
-			}
-
-			if (newSandbox) {
-				// open in new sandbox
-				// delete all previous cookies
-				CookieManager.instance.removeAllCookie()
-				var i = new Intent(activity, WebAppActivity)
-				i.action = Intent.ACTION_VIEW
-				i.data = uriFinal
-				activity.startActivity(i)
-			} else {
-				WebClient.handleExternalLink(activity, uriFinal, false)
-			}
-		].onError[ Exception error |
-			Log.e("dlgOpenUrl", "Error", error)
-			try {
-				activity.toast(error.message)
-			} catch (Exception e) {
-				// ignore, dialog must be dismissed
-			}					
-		].start()
+		CookieManager.instance.removeAllCookie()
+		var i = new Intent(activity, WebAppActivity)
+		i.action = Intent.ACTION_VIEW
+		i.data = uri
+		activity.startActivity(i)
 
 		return false
 	}

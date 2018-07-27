@@ -18,7 +18,7 @@ class DbService extends BaseDbService {
 	public static val TABLE_DOMAINS = "domain_names"
 
 	protected new(Context context) {
-		super(context, "webapps4", 5)
+		super(context, "webmediashare", 1)
 	}
 
 	def static getInstance(Context context) {
@@ -27,25 +27,6 @@ class DbService extends BaseDbService {
 
 	override onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		super.onUpgrade(db, oldVersion, newVersion)
-
-		if (oldVersion == 1 && newVersion == 2) {
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column fontSize integer default -1''')
-		}
-		
-		if (oldVersion == 2 && newVersion == 3) {
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column userAgent text''')
-		}
-		
-		if (oldVersion == 3 && newVersion == 4) {
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column certIssuedBy text''')
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column certIssuedTo text''')
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column certValidFrom text''')
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column certValidTo text''')
-		}
-
-		if (oldVersion == 4 && newVersion == 5) {
-			db.execSQL('''alter table «TABLE_WEBAPPS» add column cookies text''')
-		}
 	}
 
 	def List<Webapp> getWebapps() {

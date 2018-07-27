@@ -211,15 +211,12 @@ import static extension org.xtendroid.utils.AlertUtils.*
 			var cookies = webapp.cookies.split(";")
 			for (cookieStr: cookies) {
 				if (Debug.COOKIE) Log.d("cookie", "Loading cookie for " + domain + ": " + cookieStr)
-				CookieManager.instance.setCookie("https://" + domain, cookieStr.trim() + "; Domain=" + domain)
+				CookieManager.instance.setCookie(domain, cookieStr.trim() + "; Domain=" + domain)
 			}
 			CookieSyncManager.getInstance().sync();
 		}
 
 		var url = siteUrl.toString()
-		if (!url.startsWith("https://")) {
-			url = "https://" + url.substring(url.indexOf("://") + 3)
-		}
 		wv.loadUrl(url)
 	}
 

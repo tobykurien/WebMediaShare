@@ -81,6 +81,7 @@ import static extension org.xtendroid.utils.AlertUtils.*
          return activity.db.findById(DbService.TABLE_WEBAPPS, webappId, Webapp);
       ].then[ result |
          dismiss
+         if (result === null) throw new Exception("Webapp did not save to database")
          if (onSave != null) {
             onSave.apply(result)
          }
