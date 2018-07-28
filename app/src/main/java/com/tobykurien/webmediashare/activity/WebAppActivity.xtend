@@ -121,6 +121,10 @@ public class WebAppActivity extends BaseWebAppActivity {
 		} else {
 			autohideActionbar();
 		}
+
+		if (wc.mediaUrls.length > 0) {
+			castMenu.visible = true
+		}
 	}
 
 	override protected onPause() {
