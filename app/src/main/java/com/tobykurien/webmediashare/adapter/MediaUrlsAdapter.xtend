@@ -20,8 +20,8 @@ import com.tobykurien.webmediashare.R
     override getView(int row, View cv, ViewGroup parent) {
         var vh = ViewHolder.getOrCreate(context, cv, parent)
         var mediaUrl = getItem(row)
-        vh.name.text = mediaUrl.uri.host
-        vh.url.text = mediaUrl.getContentType + " " + mediaUrl.uri.path
+        vh.name.text = mediaUrl.uri.host + " " + mediaUrl.getContentType
+        vh.url.text = mediaUrl.uri.path
 
         vh.view
     }
