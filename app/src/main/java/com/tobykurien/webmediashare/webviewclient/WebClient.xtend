@@ -186,7 +186,7 @@ class WebClient extends WebViewClient {
 
 				if (media) {
 					Log.d("CAST", "Found media " + url)
-					shareUrl(uri, "Media", -1l)
+					shareUrl(uri, "*/*", -1l)
 				}
 			} else {
 				// check the content type for playable media

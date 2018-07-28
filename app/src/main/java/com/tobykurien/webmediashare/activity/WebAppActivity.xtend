@@ -41,6 +41,7 @@ import org.xtendroid.utils.AsyncBuilder
 
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
 import static extension org.xtendroid.utils.AlertUtils.*
+import com.tobykurien.webmediashare.fragment.DlgShareMedia
 
 /**
  * Extensions to the main activity for Android 3.0+, or at least it used to be.
@@ -459,28 +460,11 @@ public class WebAppActivity extends BaseWebAppActivity {
 		var MediaUrl mu = null
 
 		// if we have any media URL's, show dem
-		if (wc.mediaUrls.length == 0) {
+		if (wc.mediaUrls == null || wc.mediaUrls.length == 0) {
 			castMenu.visible = false
-			return
-		} else if (wc.mediaUrls.length == 1) {
-			mu = wc.mediaUrls.get(0)
 		} else {
-			// prioritize playlists over media files
-			// TODO - ask user to choose what to play
-			Log.d("CAST", wc.mediaUrls.toString)
-		}
-
-		if (mu != null) {
-			val i = new Intent(Intent.ACTION_SEND);
-			i.setType("text/plain")
-			i.putExtra(Intent.EXTRA_TEXT, mu.uri.toString());
-			i.putExtra(Intent.EXTRA_SUBJECT, mu.uri.host);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-			var chooser = Intent.createChooser(i, mu.uri.host + mu.uri.path)
-			if (i.resolveActivity(wv.context.getPackageManager()) != null) {
-				wv.context.startActivity(chooser);
-			}
+			new DlgShareMedia(wc.mediaUrls)
+				.show(supportFragmentManager, "cast")
 		}
 	}
 	
