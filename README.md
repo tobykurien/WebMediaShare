@@ -11,6 +11,5 @@ Limitations
 ===========
 
 - Cookies and referer information is lost when sharing a media URL, so it may not work if the server requires these
-- The app currently assumes only one media URL per page, which is generally true, but not always, e.g. YouTube has multiple media URL's per page for different formats
 - Does not work well for sites like YouTube.com that stream their media in several chunked files
-  - For YouTube in particular, use an app like SkyTube or NewPipe to cast to Kodi
+  - For YouTube in particular, use "Share URL" menu option to share to Kodi. Kodi will need the YouTube plugin installed.

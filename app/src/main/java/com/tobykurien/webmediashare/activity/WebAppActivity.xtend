@@ -1,11 +1,15 @@
 package com.tobykurien.webmediashare.activity;
 
 import android.annotation.TargetApi
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
@@ -16,18 +20,16 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import android.view.WindowManager
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.widget.ImageView
 import com.tobykurien.webmediashare.R
 import com.tobykurien.webmediashare.adapter.WebappsAdapter
+import com.tobykurien.webmediashare.data.MediaUrl
 import com.tobykurien.webmediashare.data.ThirdPartyDomain
 import com.tobykurien.webmediashare.db.DbService
 import com.tobykurien.webmediashare.fragment.DlgCertificate
-import com.tobykurien.webmediashare.fragment.DlgCertificateChanged
 import com.tobykurien.webmediashare.fragment.DlgSaveWebapp
-import com.tobykurien.webmediashare.utils.CertificateUtils
 import com.tobykurien.webmediashare.utils.FaviconHandler
 import com.tobykurien.webmediashare.utils.Settings
 import com.tobykurien.webmediashare.webviewclient.WebClient
@@ -56,8 +58,15 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 	var private MenuItem stopMenu = null;
 	var private MenuItem imageMenu = null;
+	var private MenuItem castMenu = null;
 	var private MenuItem shortcutMenu = null;
 	var private Bitmap unsavedFavicon = null;
+
+	val mediaUrlReceiver = new BroadcastReceiver() {
+		override onReceive(Context context, Intent intent) {
+			castMenu.visible = true
+		}
+	}
 
 	override onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,6 +79,10 @@ public class WebAppActivity extends BaseWebAppActivity {
 		ab.setCustomView(R.layout.actionbar_favicon);
 
 		registerForContextMenu(wv)
+
+		// register to listen for media URL broadcasts
+		LocalBroadcastManager.getInstance(this).registerReceiver(mediaUrlReceiver,
+			new IntentFilter(WebClient.MEDIA_URL_FOUND))
 
 		wv.onLongClickListener = [
 			var url = wv.hitTestResult.extra
@@ -118,6 +131,12 @@ public class WebAppActivity extends BaseWebAppActivity {
 		}
 	}
 
+	override onStop() {
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(mediaUrlReceiver)
+		super.onStop()
+	}
+
+
 	override onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo)
 
@@ -137,6 +156,8 @@ public class WebAppActivity extends BaseWebAppActivity {
 		imageMenu = menu.findItem(R.id.menu_image);
 		imageMenu.setChecked(Settings.getSettings(this).isLoadImages());
 		updateImageMenu();
+		castMenu = menu.findItem(R.id.menu_cast);
+		castMenu.visible = false
 
 		shortcutMenu = menu.findItem(R.id.menu_shortcut);
 		if (webappId < 0) {
@@ -180,6 +201,10 @@ public class WebAppActivity extends BaseWebAppActivity {
 					setupWebView();
 				}
 				return true;
+			}
+			case R.id.menu_cast: {
+				castMedia()
+				return true
 			}
 			case R.id.menu_font_size: {
 				showFontSizeDialog()
@@ -280,6 +305,8 @@ public class WebAppActivity extends BaseWebAppActivity {
 	override onPageLoadStarted() {
 		super.onPageLoadStarted();
 
+		if (castMenu != null) castMenu.visible = false
+
 		if (stopMenu != null) {
 			stopMenu.setTitle(R.string.menu_stop);
 			stopMenu.setIcon(R.drawable.ic_action_stop);
@@ -299,25 +326,25 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 		// alert the user if SSL certificate has changed since last time
 		// TODO - security issue: if this is MITM, cookies already sent!
-		if (webapp != null && wv.certificate != null) {
-			if (webapp.certIssuedBy != null) {
-				if (CertificateUtils.compare(webapp, wv.certificate) != 0) {
-					// SSL certificate changed!
-					var dlg = new DlgCertificateChanged(webapp, wv.certificate,
-						getString(R.string.title_cert_changed),
-						getString(R.string.cert_accept), [
-							CertificateUtils.updateCertificate(webapp, wv.certificate, db)
-							true
-						], [
-							finish
-							true
-						])
-					dlg.show(supportFragmentManager, "certificate")
-				}
-			} else {
-				CertificateUtils.updateCertificate(webapp, wv.certificate, db)
-			}
-		}
+//		if (webapp != null && wv.certificate != null) {
+//			if (webapp.certIssuedBy != null) {
+//				if (CertificateUtils.compare(webapp, wv.certificate) != 0) {
+//					// SSL certificate changed!
+//					var dlg = new DlgCertificateChanged(webapp, wv.certificate,
+//						getString(R.string.title_cert_changed),
+//						getString(R.string.cert_accept), [
+//							CertificateUtils.updateCertificate(webapp, wv.certificate, db)
+//							true
+//						], [
+//							finish
+//							true
+//						])
+//					dlg.show(supportFragmentManager, "certificate")
+//				}
+//			} else {
+//				CertificateUtils.updateCertificate(webapp, wv.certificate, db)
+//			}
+//		}
 
 		if (stopMenu != null) {
 			stopMenu.setTitle(R.string.menu_refresh);
@@ -426,6 +453,35 @@ public class WebAppActivity extends BaseWebAppActivity {
 		].onError [ Exception e |
 			toast(e.class.name + " " + e.message)
 		].start()
+	}
+
+	def castMedia() {
+		var MediaUrl mu = null
+
+		// if we have any media URL's, show dem
+		if (wc.mediaUrls.length == 0) {
+			castMenu.visible = false
+			return
+		} else if (wc.mediaUrls.length == 1) {
+			mu = wc.mediaUrls.get(0)
+		} else {
+			// prioritize playlists over media files
+			// TODO - ask user to choose what to play
+			Log.d("CAST", wc.mediaUrls.toString)
+		}
+
+		if (mu != null) {
+			val i = new Intent(Intent.ACTION_SEND);
+			i.setType("text/plain")
+			i.putExtra(Intent.EXTRA_TEXT, mu.uri.toString());
+			i.putExtra(Intent.EXTRA_SUBJECT, mu.uri.host);
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+			var chooser = Intent.createChooser(i, mu.uri.host + mu.uri.path)
+			if (i.resolveActivity(wv.context.getPackageManager()) != null) {
+				wv.context.startActivity(chooser);
+			}
+		}
 	}
 	
 	def showCertificateDetails() {

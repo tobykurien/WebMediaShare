@@ -31,14 +31,20 @@ import static extension com.tobykurien.webmediashare.utils.Dependencies.*
 import static extension org.xtendroid.utils.AsyncBuilder.*
 
 import com.tobykurien.webmediashare.db.DbService
+import com.tobykurien.webmediashare.data.MediaUrl
 import android.content.Context
 import android.webkit.WebResourceRequest
 import java.net.URLConnection
 import java.net.URL
 import java.util.List
+import android.support.v4.media.MediaBrowserCompatUtils
+import java.util.ArrayList
+import android.support.v4.content.LocalBroadcastManager
+import java.net.HttpURLConnection
 
 class WebClient extends WebViewClient {
 	public static val UNKNOWN_HOST = "999.999.999.999" // impossible hostname to avoid vuln
+	public static val MEDIA_URL_FOUND = "com.tobykurien.webmediashare.MEDIA_URL_FOUND"
 
 	package BaseWebAppActivity activity
 	package Webapp webapp
@@ -46,6 +52,7 @@ class WebClient extends WebViewClient {
 	package View pd
 	public  Set<String> domainUrls
 	package var blockedHosts = new HashMap<String, Boolean>()
+	public var ArrayList<MediaUrl> mediaUrls = newArrayList()
 
 	new(BaseWebAppActivity activity, Webapp webapp, WebView wv, View pd, Set<String> domainUrls) {
 		this.activity = activity
@@ -94,20 +101,25 @@ class WebClient extends WebViewClient {
 	}
 
 	override boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+		if (!getRootDomain(url).equals(getRootDomain(webapp.url))) {
+			// Don't allow sites to redirect away from their domain
+			Log.d("sandbox", "Denying redirect to " + url)
+			return true
+		}
+
 		return super.shouldOverrideUrlLoading(view, url)
 	}
 
-	def shareUrl(Context context, Uri uri) {
-		var i = new Intent(Intent.ACTION_SEND);
-		i.setType("text/plain")
-		i.putExtra(Intent.EXTRA_TEXT, uri.toString());
-		i.putExtra(Intent.EXTRA_SUBJECT, uri.host);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		var chooser = Intent.createChooser(i, uri.host + uri.path)
-		if (i.resolveActivity(context.getPackageManager()) != null) {
-			context.startActivity(chooser);
-		}
+	def shareUrl(Uri uri, String contentType, Long contentLength) {
+		val mu = new MediaUrl()
+		mu.uri = uri
+		mu.contentType = contentType
+		mu.contentLength = contentLength
+		mediaUrls.add(mu)
+
+		// alert other components that we found a media URL
+		LocalBroadcastManager.getInstance(wv.context).sendBroadcast(new Intent(MEDIA_URL_FOUND))
 	}
 
 	def static handleExternalLink(Context activity, Uri uri, boolean openInExternalApp) {
@@ -154,8 +166,12 @@ class WebClient extends WebViewClient {
 		}
 	}
 
-	override onLoadResource(WebView view, String url) {
+	override WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+		// Block 3rd party requests (i.e. scripts/iframes/etc. outside Google's domains)
+		// and also any unencrypted connections
 		val Uri uri = Uri.parse(url)
+		val siteUrl = getHost(uri)
+		var boolean isBlocked = false
 
 		try {
 			if (uri.path.contains(".")) {
@@ -170,51 +186,37 @@ class WebClient extends WebViewClient {
 
 				if (media) {
 					Log.d("CAST", "Found media " + url)
-					shareUrl(view.context, uri)
+					shareUrl(uri, "Media", -1l)
 				}
 			} else {
 				// check the content type for playable media
 				async() [
-					var URLConnection con = new URL(url).openConnection()
+					var con = new URL(url).openConnection() as HttpURLConnection
+					con.setRequestMethod("HEAD")
 					if (activity.settings.userAgent != null &&
 							activity.settings.userAgent.trim().length > 0) {
 						// User-agent may affect site redirects
 						con.setRequestProperty("User-Agent", activity.settings.userAgent)
 					}
-					con.connect()
-					return #[ con.getContentType(), con.getContentLengthLong(), con.getURL() ]
+					val ret = #[ con.getContentType(), con.getContentLengthLong(), con.getURL() ]
+					con.inputStream.close()
+					return ret
 				].then[ List result |
 					val contentType = result.get(0) as String
 					val contentLength = result.get(1) as Long
 					val url2 = result.get(2) as URL
 
-					if (contentType.startsWith("video/") || contentType.startsWith("audio/")) {
+					if (contentType?.startsWith("video/") || contentType?.startsWith("audio/")) {
 						Log.d("CAST", result.toString() + ": " + url2)
-						shareUrl(view.context, Uri.parse(url2.toString))
+						shareUrl(Uri.parse(url2.toString), contentType, contentLength)
 					}
 				].onError[ error |
 					// ignore errors
-					Log.e("CAST", "error", error)
+					//Log.e("CAST", "error", error)
 				].start()
 			}
 		} catch (Exception e) {
 			Log.d("CAST", e.class.simpleName + " " + e.message)
-		}
-	}
-
-	override WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-		// Block 3rd party requests (i.e. scripts/iframes/etc. outside Google's domains)
-		// and also any unencrypted connections
-		val Uri uri = Uri.parse(url)
-		val siteUrl = getHost(uri)
-		var boolean isBlocked = false
-
-		if (activity.settings.isBlock3rdParty() && !isInSandbox(uri)) {
-			isBlocked = true
-		}
-
-		if (activity.settings.isBlockHttp() && !uri.getScheme().equals("https") && !isInSandbox(uri)) {
-			isBlocked = true
 		}
 
 		if (isBlocked) {
@@ -340,13 +342,24 @@ class WebClient extends WebViewClient {
 	 * @return
 	 */
 	def public static boolean isInSandbox(Uri uri, Set<String> domainUrls) {
-		// unlike WebApps, we allow all 3rd party requests
-		return true
+		if("data".equals(uri.getScheme()) || "blob".equals(uri.getScheme())) return true
+		var String host = uri.getHost()
+		if (host == null) return true;
+
+		for (String sites : domainUrls) {
+			for (String site : sites.split(" ")) {
+				if (site != null && host.toLowerCase().endsWith(site.toLowerCase())) {
+					return true
+				}
+
+			}
+
+		}
+		return false
 	}
 
 	def protected boolean isInSandbox(Uri uri) {
-		// unlike WebApps, we allow all 3rd party requests
-		return true;
+		return isInSandbox(uri, domainUrls)
 	}
 
 	def Set<String> getBlockedHosts() {

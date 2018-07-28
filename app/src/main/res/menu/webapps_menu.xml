@@ -9,16 +9,24 @@
         app:showAsAction="always"/>
 
     <item
+        android:id="@+id/menu_cast"
+        android:icon="@drawable/ic_action_cast"
+        android:title="@string/menu_cast"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/menu_3rd_party"
         android:icon="@drawable/ic_action_3rd_party"
         android:title="@string/menu_3rd_party"
-        app:showAsAction="always"/>
+        app:showAsAction="never"
+        android:enabled="false"
+        android:visible="false"/>
 
     <item
         android:id="@+id/menu_image"
         android:icon="@drawable/ic_action_image"
         android:title="@string/menu_toggle_image"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
         
     <item
         android:id="@+id/menu_font_size"
@@ -54,7 +62,9 @@
         android:id="@+id/menu_certificate"
         android:icon="@drawable/ic_action_certificate"
         android:title="@string/menu_certificate"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"
+        android:enabled="false"
+        android:visible="false"/>
 
     <item
         android:id="@+id/menu_settings"
