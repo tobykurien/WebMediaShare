@@ -41,6 +41,7 @@ import android.support.v4.media.MediaBrowserCompatUtils
 import java.util.ArrayList
 import android.support.v4.content.LocalBroadcastManager
 import java.net.HttpURLConnection
+import android.webkit.MimeTypeMap
 
 class WebClient extends WebViewClient {
 	public static val UNKNOWN_HOST = "999.999.999.999" // impossible hostname to avoid vuln
@@ -103,23 +104,36 @@ class WebClient extends WebViewClient {
 	override boolean shouldOverrideUrlLoading(WebView view, String url) {
 
 		if (!getRootDomain(url).equals(getRootDomain(webapp.url))) {
-			// Don't allow sites to redirect away from their domain
-			Log.d("sandbox", "Denying redirect to " + url)
+			try {
+				handleExternalLink(view.context, Uri.parse(url), false)
+			} catch (Exception e) {
+				// probably bad url
+				Log.e("WebClient", "error handling external url", e)
+			}
 			return true
 		}
 
 		return super.shouldOverrideUrlLoading(view, url)
 	}
 
-	def shareUrl(Uri uri, String contentType, Long contentLength) {
+	def synchronized shareUrl(Uri uri, String contentType, Long contentLength) {
+		for (mu : mediaUrls) {
+			if (mu.toString().equals(uri.toString)) {
+				// url already added
+				return
+			}
+		}
+
 		val mu = new MediaUrl()
 		mu.uri = uri
 		mu.contentType = contentType
 		mu.contentLength = contentLength
 		mediaUrls.add(mu)
+		Log.d("WebClient", mediaUrls.toString)
 
 		// alert other components that we found a media URL
-		LocalBroadcastManager.getInstance(wv.context).sendBroadcast(new Intent(MEDIA_URL_FOUND))
+		LocalBroadcastManager.getInstance(wv.context).sendBroadcast(new Intent
+			(MEDIA_URL_FOUND))
 	}
 
 	def static handleExternalLink(Context activity, Uri uri, boolean openInExternalApp) {
@@ -181,12 +195,14 @@ class WebClient extends WebViewClient {
 					// video
 					".mp4",".mpv",".mpeg",".webm",".vp9",".ogv",".mkv",".avi",".gifv",
 					// audio
-					".aac", ".ogg", ".mp3", ".m4a"
+					".aac", ".ogg", ".mp3", ".m4a", ".nsv"
 				].exists[ uri.path.endsWith(it) ]
 
 				if (media) {
 					Log.d("CAST", "Found media " + url)
-					shareUrl(uri, "*/*", -1l)
+					shareUrl(uri, "video/mpeg", -1l)
+				} else {
+					//Log.d("CAST", "skipping " + uri.toString)
 				}
 			} else {
 				// check the content type for playable media

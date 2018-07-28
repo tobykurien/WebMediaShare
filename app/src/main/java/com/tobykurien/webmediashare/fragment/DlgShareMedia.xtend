@@ -47,11 +47,12 @@ import android.content.IntentFilter
 
         new AlertDialog.Builder(activity)
             .setTitle(R.string.title_share_media)
-            .setSingleChoiceItems(adapter, 0, [a, b|
+            .setSingleChoiceItems(adapter, -1, [a, b|
                 selectedMediaUrl = mediaUrls.get(b)
             ])
             .setPositiveButton(R.string.btn_share_url, null) // to avoid it closing dialog
             .setNeutralButton(R.string.btn_share_stream,null)
+            //.setNegativeButton(android.R.string.cancel, null)
             .create()
     }
 
@@ -62,7 +63,7 @@ import android.content.IntentFilter
         LocalBroadcastManager.getInstance(activity).registerReceiver(mediaUrlReceiver,
             new IntentFilter(WebClient.MEDIA_URL_FOUND))
 
-        Log.d("CAST", mediaUrls.toString)
+        Log.d("DlgShareMedia", mediaUrls.toString)
         if (mediaUrls == null || mediaUrls.length == 0) {
             dismiss()
             return
@@ -84,9 +85,7 @@ import android.content.IntentFilter
 
         val button2 = (dialog as AlertDialog).getButton(AlertDialog.BUTTON_NEUTRAL)
         button2.setOnClickListener [
-            val i = new Intent(Intent.ACTION_SEND);
-            i.setType(selectedMediaUrl.contentType)
-            i.putExtra(Intent.EXTRA_STREAM, selectedMediaUrl.uri);
+            val i = new Intent(Intent.ACTION_VIEW, selectedMediaUrl.uri);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             var chooser = Intent.createChooser(i, selectedMediaUrl.uri.host)

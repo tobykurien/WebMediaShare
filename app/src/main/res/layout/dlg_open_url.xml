@@ -36,7 +36,9 @@
             android:id="@+id/chkNewSandbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/open_new_sandbox"/>
+            android:text="@string/open_new_sandbox"
+            android:checked="true"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

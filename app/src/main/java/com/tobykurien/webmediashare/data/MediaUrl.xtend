@@ -10,6 +10,6 @@ class MediaUrl {
     Long contentLength
 
     override toString() {
-        contentType + ", " + contentLength + " bytes, " + uri.toString()
+        contentType + ", " + contentLength + " bytes, " + uri.toString() + "\n"
     }
 }
