@@ -231,7 +231,7 @@ class WebClient extends WebViewClient {
 						// User-agent may affect site redirects
 						con.setRequestProperty("User-Agent", activity.settings.userAgent)
 					}
-					val ret = #[ con.getContentType(), con.getContentLengthLong(), con.getURL() ]
+					val ret = #[ con.getContentType(), con.getContentLength() as long, con.getURL() ]
 					con.inputStream.close()
 					return ret
 				].then[ List result |
