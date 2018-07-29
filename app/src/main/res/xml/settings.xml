@@ -5,7 +5,8 @@
         android:title="@string/title_3rd_party"
         android:summary="@string/summary_3rd_party"
         android:defaultValue="true"
-        android:key="block3rd_party"/>    
+        android:key="block3rd_party"
+        android:visibility="gone"/>
 
     <ListPreference
         android:title="@string/title_font_size"

@@ -1,20 +1,24 @@
 package com.tobykurien.webmediashare.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.text.Html
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
+import android.webkit.CookieManager
 import com.tobykurien.webmediashare.R
 import com.tobykurien.webmediashare.adapter.WebappsAdapter
 import com.tobykurien.webmediashare.data.Webapp
 import com.tobykurien.webmediashare.db.DbService
 import com.tobykurien.webmediashare.fragment.DlgOpenUrl
+import com.tobykurien.webmediashare.utils.FaviconHandler
 import com.tobykurien.webmediashare.webviewclient.WebViewUtils
 import java.util.List
 import org.xtendroid.app.AndroidActivity
@@ -23,16 +27,6 @@ import org.xtendroid.utils.AsyncBuilder
 
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
 import static extension org.xtendroid.utils.AlertUtils.*
-import static extension org.xtendroid.utils.AsyncBuilder.*
-import android.webkit.CookieManager
-import com.tobykurien.webmediashare.utils.Debug
-import com.tobykurien.webmediashare.webviewclient.WebClient
-import android.webkit.CookieSyncManager
-import com.tobykurien.webmediashare.BuildConfig
-import android.os.Build
-import com.tobykurien.webmediashare.utils.FaviconHandler
-import android.view.View
-import android.app.Activity
 
 @AndroidActivity(R.layout.main) class MainActivity extends AppCompatActivity {
     var protected List<Webapp> webapps

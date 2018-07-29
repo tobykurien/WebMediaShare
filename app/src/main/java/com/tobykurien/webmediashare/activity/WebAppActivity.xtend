@@ -37,11 +37,19 @@ import com.tobykurien.webmediashare.webviewclient.WebViewUtils
 import java.util.ArrayList
 import java.util.List
 import java.util.Set
-import org.xtendroid.utils.AsyncBuilder
 
+import static extension org.xtendroid.utils.AsyncBuilder.*
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
 import static extension org.xtendroid.utils.AlertUtils.*
+import static extension org.xtendroid.utils.TimeUtils.*
+
 import com.tobykurien.webmediashare.fragment.DlgShareMedia
+import java.io.File
+import java.util.Date
+import java.net.URL
+import java.net.HttpURLConnection
+import com.google.common.io.ByteStreams
+import java.io.FileOutputStream
 
 /**
  * Extensions to the main activity for Android 3.0+, or at least it used to be.
@@ -108,6 +116,10 @@ public class WebAppActivity extends BaseWebAppActivity {
 		val iconHandler = new FaviconHandler(this)
 		WebappsAdapter.loadFavicon(this, iconHandler.getFavIcon(webappId), iconImg)
 		iconHandler.deleteFavIcon(webappId)
+
+
+
+		downloadAdblockList()
 	}
 
 	override protected onResume() {
@@ -365,7 +377,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 		// also save favicon
 		if (webappId >= 0) {
-			AsyncBuilder.async [ builder, params |
+			async [ builder, params |
 				new FaviconHandler(this).saveFavIcon(webappId, icon)
 				return true
 			].onError [ ex |
@@ -416,7 +428,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 	 * Show a dialog to allow user to unblock or re-block third party domains
 	 */
 	def private void dlg3rdParty() {
-		AsyncBuilder.async [ builder, params |
+		async [ builder, params |
 			// get the saved list of whitelisted domains
 			db.findByFields(DbService.TABLE_DOMAINS, #{
 				"webappId" -> webappId
@@ -486,7 +498,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 	def void saveWebappUnblockList(long webappId, Set<String> unblock) {
 		if (webappId >= 0) {
-			AsyncBuilder.async [ builder, params |
+			async [ builder, params |
 				// save the unblock list
 				// clear current list
 				db.execute(R.string.dbDeleteDomains, #{"webappId" -> webappId});
@@ -541,5 +553,24 @@ public class WebAppActivity extends BaseWebAppActivity {
 		val shortcut = ShortcutActivity.getShortcut(this, webapp)
 		ShortcutManagerCompat.requestPinShortcut(this, shortcut.build(), null)
 		toast(getString(R.string.msg_shortcut_added))
+	}
+
+	def downloadAdblockList() {
+		// download adbock list
+		val url = "https://pgl.yoyo.org/as/serverlist.php?showintro=0;hostformat=plain"
+		val adhosts = getCacheDir().absolutePath + "/adhosts"
+		val f = new File(adhosts)
+		if (!f.exists() || !f.canRead() || f.lastModified < 1.day.ago.time) {
+			Log.d("adblock", "Updating adblock list")
+			async [ builder, params |
+				var con = new URL(url).openConnection() as HttpURLConnection
+				con.connect()
+				ByteStreams.copy(con.inputStream, new FileOutputStream(f))
+				con.inputStream.close()
+				return true
+			].onError [ error |
+				Log.e("adblock", "Error updating adhosts", error)
+			].start()
+		}
 	}
 }

@@ -1,10 +1,11 @@
 package com.tobykurien.webmediashare.webviewclient
 
-import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
@@ -19,29 +20,24 @@ import android.widget.Toast
 import com.tobykurien.webmediashare.R
 import com.tobykurien.webmediashare.activity.BaseWebAppActivity
 import com.tobykurien.webmediashare.activity.WebAppActivity
+import com.tobykurien.webmediashare.data.MediaUrl
 import com.tobykurien.webmediashare.data.Webapp
 import com.tobykurien.webmediashare.fragment.DlgCertificate
 import com.tobykurien.webmediashare.utils.Debug
-import java.lang.UnsupportedOperationException
 import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.ArrayList
 import java.util.HashMap
+import java.util.List
 import java.util.Set
 
-import static extension com.tobykurien.webmediashare.utils.Dependencies.*
-import static extension org.xtendroid.utils.AsyncBuilder.*
+import static org.xtendroid.utils.AsyncBuilder.*
 
-import com.tobykurien.webmediashare.db.DbService
-import com.tobykurien.webmediashare.data.MediaUrl
-import android.content.Context
-import android.webkit.WebResourceRequest
-import java.net.URLConnection
-import java.net.URL
-import java.util.List
-import android.support.v4.media.MediaBrowserCompatUtils
-import java.util.ArrayList
-import android.support.v4.content.LocalBroadcastManager
-import java.net.HttpURLConnection
-import android.webkit.MimeTypeMap
+import static extension com.tobykurien.webmediashare.utils.Dependencies.*
+import java.io.BufferedReader
 
 class WebClient extends WebViewClient {
 	public static val UNKNOWN_HOST = "999.999.999.999" // impossible hostname to avoid vuln
@@ -52,6 +48,7 @@ class WebClient extends WebViewClient {
 	package WebView wv
 	package View pd
 	public  Set<String> domainUrls
+	public  Set<String> adblockHosts = newHashSet()
 	package var blockedHosts = new HashMap<String, Boolean>()
 	public var ArrayList<MediaUrl> mediaUrls = newArrayList()
 
@@ -61,6 +58,9 @@ class WebClient extends WebViewClient {
 		this.wv = wv
 		this.pd = pd
 		this.domainUrls = domainUrls
+		if (adblockHosts.empty) {
+			loadAdblockHosts()
+		}
 	}
 	
 	override onReceivedClientCertRequest(WebView view, ClientCertRequest request) {
@@ -236,6 +236,15 @@ class WebClient extends WebViewClient {
 			Log.d("CAST", e.class.simpleName + " " + e.message)
 		}
 
+		// block ads
+		if (!adblockHosts.empty) {
+			val root = getRootDomain(uri.host)
+			if (adblockHosts.exists[ it.equals(root) ]) {
+				Log.d("adblock", "AdBlocked " + uri.host)
+				isBlocked = true
+			}
+		}
+
 		if (isBlocked) {
 			if (Debug.ON) Log.d("webclient", "Blocking " + url);
 			blockedHosts.put(getRootDomain(url), true)
@@ -392,5 +401,24 @@ class WebClient extends WebViewClient {
 			unblock.add(s)
 		}
 		domainUrls = unblock
+	}
+
+	def loadAdblockHosts() {
+		if (adblockHosts.empty) {
+			val adhosts = new File(wv.context.getCacheDir().absolutePath + "/adhosts")
+			if (adhosts.exists && adhosts.canRead) {
+				val fis = new BufferedReader(new FileReader(adhosts))
+				try {
+					var String line;
+					while ((line = fis.readLine) != null) {
+						adblockHosts.add(line)
+					}
+				} catch (Exception e) {
+					Log.e("adblock", "Unable to read adblock list", e)
+				} finally {
+					fis.close()
+				}
+			}
+		}
 	}
 }
