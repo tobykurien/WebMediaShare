@@ -69,22 +69,24 @@ class WebClient extends WebViewClient {
 	}
 
 	override void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-		if (webapp == null || webapp.certIssuedBy == null) {
-			// no SSL cert was saved for this webapp, so show SSL error to user
-			var dlg = new DlgCertificate(error.certificate,
-						activity.getString(R.string.title_cert_untrusted),
-						activity.getString(R.string.cert_accept), [
-							handler.proceed()
-							true
-						], [
-							handler.cancel()
-							true
-						])
-			dlg.show(activity.supportFragmentManager, "certificate")
-		} else {
-			// in onPageLoaded, WebAppActivity will check that the cert matches saved one
-			handler.proceed()
-		}
+		handler.proceed()
+
+//		if (webapp == null || webapp.certIssuedBy == null) {
+//			// no SSL cert was saved for this webapp, so show SSL error to user
+//			var dlg = new DlgCertificate(error.certificate,
+//						activity.getString(R.string.title_cert_untrusted),
+//						activity.getString(R.string.cert_accept), [
+//							handler.proceed()
+//							true
+//						], [
+//							handler.cancel()
+//							true
+//						])
+//			dlg.show(activity.supportFragmentManager, "certificate")
+//		} else {
+//			// in onPageLoaded, WebAppActivity will check that the cert matches saved one
+//			handler.proceed()
+//		}
 	}
 
 	override void onPageFinished(WebView view, String url) {
@@ -119,7 +121,7 @@ class WebClient extends WebViewClient {
 
 	def synchronized shareUrl(Uri uri, String contentType, Long contentLength) {
 		for (mu : mediaUrls) {
-			if (mu.toString().equals(uri.toString)) {
+			if (mu.uri.toString().equals(uri.toString)) {
 				// url already added
 				return
 			}
@@ -243,7 +245,7 @@ class WebClient extends WebViewClient {
 					}
 				].onError[ error |
 					// ignore errors
-					//Log.e("CAST", "error", error)
+					Log.e("CAST", "ERROR checking " + url, error)
 				].start()
 			}
 		} catch (Exception e) {

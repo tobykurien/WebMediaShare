@@ -73,7 +73,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 	val mediaUrlReceiver = new BroadcastReceiver() {
 		override onReceive(Context context, Intent intent) {
-			castMenu.visible = true
+			setCastMenuVisibility()
 		}
 	}
 
@@ -134,9 +134,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 			autohideActionbar();
 		}
 
-		if (wc.mediaUrls.length > 0) {
-			castMenu.visible = true
-		}
+        setCastMenuVisibility()
 	}
 
 	override protected onPause() {
@@ -174,7 +172,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 		imageMenu.setChecked(Settings.getSettings(this).isLoadImages());
 		updateImageMenu();
 		castMenu = menu.findItem(R.id.menu_cast);
-		castMenu.visible = false
+        setCastMenuVisibility()
 
 		shortcutMenu = menu.findItem(R.id.menu_shortcut);
 		if (webappId < 0) {
@@ -322,7 +320,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 	override onPageLoadStarted() {
 		super.onPageLoadStarted();
 
-		if (castMenu != null) castMenu.visible = false
+        setCastMenuVisibility()
 
 		if (stopMenu != null) {
 			stopMenu.setTitle(R.string.menu_stop);
@@ -477,7 +475,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 		// if we have any media URL's, show dem
 		if (wc.mediaUrls == null || wc.mediaUrls.length == 0) {
-			castMenu.visible = false
+            setCastMenuVisibility()
 		} else {
 			new DlgShareMedia(wc.mediaUrls)
 				.show(supportFragmentManager, "cast")
@@ -554,6 +552,16 @@ public class WebAppActivity extends BaseWebAppActivity {
 		ShortcutManagerCompat.requestPinShortcut(this, shortcut.build(), null)
 		toast(getString(R.string.msg_shortcut_added))
 	}
+
+    def setCastMenuVisibility() {
+        if (castMenu != null) {
+            if (wc?.mediaUrls != null) {
+                castMenu.visible = wc.mediaUrls.length > 0
+            } else {
+                castMenu.visible = false
+            }
+        }
+    }
 
 	def downloadAdblockList() {
 		// download adbock list
