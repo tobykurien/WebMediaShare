@@ -98,6 +98,7 @@ class WebClient extends WebViewClient {
 		//Log.d("webclient", '''loading «url»''')
 		if(pd !== null) pd.setVisibility(View.VISIBLE)
 		activity.onPageLoadStarted()
+		mediaUrls.clear()
 		super.onPageStarted(view, url, favicon)
 	}
 
@@ -152,14 +153,14 @@ class WebClient extends WebViewClient {
                 i.setData(uri)
                 activity.startActivity(i)
             } else {
-				Log.d("url_loading", "Opening in new sandbox " + uri.toString)
-                // open in new sandbox
-                // delete all previous cookies
-                CookieManager.instance.removeAllCookie()
-                var i = new Intent(activity, WebAppActivity)
-                i.action = Intent.ACTION_VIEW
-                i.data = uri
-                activity.startActivity(i)
+				Log.d("url_loading", "Ignoring URL as it is outside sandbox " + uri.toString)
+//                // open in new sandbox
+//                // delete all previous cookies
+//                CookieManager.instance.removeAllCookie()
+//                var i = new Intent(activity, WebAppActivity)
+//                i.action = Intent.ACTION_VIEW
+//                i.data = uri
+//                activity.startActivity(i)
             }
 		} else {
 			if (webapps.length > 1) {
