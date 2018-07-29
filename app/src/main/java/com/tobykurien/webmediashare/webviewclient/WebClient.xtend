@@ -192,15 +192,14 @@ class WebClient extends WebViewClient {
 		if (!adblockHosts.empty) {
 			val root = getRootDomain(uri.host)
 			if (adblockHosts.exists[ it.equals(root) ]) {
-				Log.d("adblock", "AdBlocked " + uri.host)
 				isBlocked = true
 			}
 		}
 
 		if (isBlocked) {
 			if (Debug.ON) Log.d("webclient", "Blocking " + url);
-			blockedHosts.put(getRootDomain(url), true)
-			return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("[blocked]".getBytes()))
+			//blockedHosts.put(getRootDomain(url), true)
+			return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("".getBytes()))
 		}
 
 		try {
