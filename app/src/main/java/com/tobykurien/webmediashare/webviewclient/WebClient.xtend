@@ -188,6 +188,21 @@ class WebClient extends WebViewClient {
 		val siteUrl = getHost(uri)
 		var boolean isBlocked = false
 
+		// block ads
+		if (!adblockHosts.empty) {
+			val root = getRootDomain(uri.host)
+			if (adblockHosts.exists[ it.equals(root) ]) {
+				Log.d("adblock", "AdBlocked " + uri.host)
+				isBlocked = true
+			}
+		}
+
+		if (isBlocked) {
+			if (Debug.ON) Log.d("webclient", "Blocking " + url);
+			blockedHosts.put(getRootDomain(url), true)
+			return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("[blocked]".getBytes()))
+		}
+
 		try {
 			if (uri.path.contains(".")) {
 				var media = #[
@@ -234,21 +249,6 @@ class WebClient extends WebViewClient {
 			}
 		} catch (Exception e) {
 			Log.d("CAST", e.class.simpleName + " " + e.message)
-		}
-
-		// block ads
-		if (!adblockHosts.empty) {
-			val root = getRootDomain(uri.host)
-			if (adblockHosts.exists[ it.equals(root) ]) {
-				Log.d("adblock", "AdBlocked " + uri.host)
-				isBlocked = true
-			}
-		}
-
-		if (isBlocked) {
-			if (Debug.ON) Log.d("webclient", "Blocking " + url);
-			blockedHosts.put(getRootDomain(url), true)
-			return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("[blocked]".getBytes()))
 		}
 
 		val cookieManager = CookieManager.instance
