@@ -221,9 +221,9 @@ class WebClient extends WebViewClient {
 				}
 			} else {
 				// check the content type for playable media
-				async() [
+				async() [ builder, params |
 					var con = new URL(url).openConnection() as HttpURLConnection
-					con.setRequestMethod("HEAD")
+					//con.setRequestMethod("HEAD")
 					if (activity.settings.userAgent != null &&
 							activity.settings.userAgent.trim().length > 0) {
 						// User-agent may affect site redirects
