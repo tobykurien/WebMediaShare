@@ -27,6 +27,7 @@ import org.xtendroid.utils.AsyncBuilder
 
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
 import static extension org.xtendroid.utils.AlertUtils.*
+import com.tobykurien.webmediashare.webviewclient.WebClient
 
 @AndroidActivity(R.layout.main) class MainActivity extends AppCompatActivity {
     var protected List<Webapp> webapps
@@ -122,7 +123,8 @@ import static extension org.xtendroid.utils.AlertUtils.*
 	        .setMessage(Html.fromHtml(getString(R.string.tips)))
 	        .setPositiveButton(android.R.string.ok, null)
             .setNeutralButton(R.string.btn_website, [
-                DlgOpenUrl.openUrl(this, "https://github.com/tobykurien/webmediashare", false)
+                val link = Uri.parse("https://github.com/tobykurien/WebMediaShare")
+                WebClient.handleExternalLink(this, link, true);
             ])
             .create()
 	        .show()

@@ -47,7 +47,7 @@
     <string name="action_tips">Tips</string>
     <string name="tips"><![CDATA[
         <p><b>Adding web apps</b>: to add a new web app, open the site, then click the "Save as Webapp" action</p>
-        <p><b>Casting</b>: Click the cast action to send media to other apps like VLC or Kodi remote for playing on your TV</p>
+        <p><b>Casting</b>: Click the cast action to send media to other apps like VLC or Kodi remote (Kore) for playing on your TV</p>
         <p><b>Homescreen shortcuts</b>: Long-press your homescreen and access the widgets page to add a webapp shortcut to your homescreen</p>
 ]]></string>
     <string name="btn_website">Source code</string>

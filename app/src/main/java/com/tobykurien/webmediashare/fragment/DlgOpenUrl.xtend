@@ -42,7 +42,7 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 			.setNegativeButton(android.R.string.cancel, null)
 			.setNeutralButton(R.string.btn_recommended_sites, [
 				var link = Uri.parse("https://github.com/tobykurien/WebApps/wiki/Recommended-Webapps")
-				WebClient.handleExternalLink(activity, link, false);
+				WebClient.handleExternalLink(activity, link, true);
 				dismiss()
 			  ])
 			.create()
@@ -111,13 +111,6 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 				uriFinal = Uri.parse(result)
 			} else {
 				uriFinal = originalUri
-			}
-
-			if (!uriFinal.getScheme().equals("https")) {
-				// force it to https
-				var builder = uriFinal.buildUpon()
-				builder.scheme("https")
-				uriFinal = builder.build()
 			}
 
 			if (newSandbox) {

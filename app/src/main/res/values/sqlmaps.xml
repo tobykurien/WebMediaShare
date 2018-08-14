@@ -27,7 +27,6 @@
         insert into webapps (name,url) values (\'SoundCloud\',\'https://www.soundcloud.com\');
         insert into webapps (name,url) values (\'Mixcloud\',\'https://m.mixcloud.com\');
         insert into webapps (name,url) values (\'Strikeout\',\'https://www.strikeout.nu\');
-        insert into webapps (name,url) values (\'Trance1.fm\',\'https://www.strikeout.nu\');
     </string>
 
     <string translatable="false" name="dbGetWebapps">
