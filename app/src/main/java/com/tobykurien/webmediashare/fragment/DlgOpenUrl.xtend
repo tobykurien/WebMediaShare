@@ -78,7 +78,9 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 
 		    if (!url.contains("://")) {
 				uri = Uri.parse("http://" + url)
-			}
+			} else {
+                uri = Uri.parse(url)
+            }
 		} catch (Exception e) {
 			Log.e("dlgOpenUrl", "Error opening url", e)
 			return false
