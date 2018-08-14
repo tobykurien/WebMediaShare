@@ -100,7 +100,11 @@ class WebClient extends WebViewClient {
 		//Log.d("webclient", '''loading «url»''')
 		if(pd !== null) pd.setVisibility(View.VISIBLE)
 		activity.onPageLoadStarted()
+
 		mediaUrls.clear()
+		LocalBroadcastManager.getInstance(wv.context).sendBroadcast(new Intent
+		(MEDIA_URL_FOUND))
+
 		super.onPageStarted(view, url, favicon)
 	}
 

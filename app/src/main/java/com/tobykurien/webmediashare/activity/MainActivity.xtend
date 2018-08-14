@@ -121,7 +121,10 @@ import static extension org.xtendroid.utils.AlertUtils.*
 	        .setTitle(R.string.action_tips)
 	        .setMessage(Html.fromHtml(getString(R.string.tips)))
 	        .setPositiveButton(android.R.string.ok, null)
-	        .create()
+            .setNeutralButton(R.string.btn_website, [
+                DlgOpenUrl.openUrl(this, "https://github.com/tobykurien/webmediashare", false)
+            ])
+            .create()
 	        .show()
     }
 

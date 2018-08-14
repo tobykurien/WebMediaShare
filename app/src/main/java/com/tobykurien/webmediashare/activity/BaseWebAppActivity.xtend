@@ -116,17 +116,13 @@ import static extension org.xtendroid.utils.AlertUtils.*
 
 			override onShowCustomView(View view, CustomViewCallback callback) {
 				super.onShowCustomView(view, callback)
-				wv.visibility = View.GONE
-				fullscreenView.visibility = View.VISIBLE
 				fullscreenView.addView(view)
-				fullscreen = true
+				onFullscreenChanged(true)
 			}
 
 			override onHideCustomView() {
 				super.onHideCustomView()
-				wv.visibility = View.VISIBLE
-				fullscreenView.visibility = View.GONE
-				fullscreen = false
+				onFullscreenChanged(false)
 			}
 
 
@@ -162,6 +158,18 @@ import static extension org.xtendroid.utils.AlertUtils.*
 	}
 
 	def void onPageLoadDone() {
+	}
+
+	def onFullscreenChanged(boolean isFullscreen) {
+		setFullscreen(isFullscreen)
+
+		if (isFullscreen) {
+			wv.visibility = View.GONE
+			fullscreenView.visibility = View.VISIBLE
+		} else {
+			wv.visibility = View.VISIBLE
+			fullscreenView.visibility = View.GONE
+		}
 	}
 
 	def void onClientCertificateRequest(ClientCertRequest request) {

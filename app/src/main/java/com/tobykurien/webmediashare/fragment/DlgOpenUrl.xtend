@@ -126,6 +126,7 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 				i.action = Intent.ACTION_VIEW
 				i.data = uriFinal
 				activity.startActivity(i)
+
 			} else {
 				WebClient.handleExternalLink(activity, uriFinal, false)
 			}

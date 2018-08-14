@@ -47,7 +47,7 @@ import android.content.IntentFilter
 
         new AlertDialog.Builder(activity)
             .setTitle(R.string.title_share_media)
-            .setSingleChoiceItems(adapter, -1, [a, b|
+            .setSingleChoiceItems(adapter, 0, [a, b|
                 selectedMediaUrl = mediaUrls.get(b)
             ])
             .setPositiveButton(R.string.btn_share_url, null) // to avoid it closing dialog

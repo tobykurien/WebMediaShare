@@ -50,6 +50,7 @@ import java.net.URL
 import java.net.HttpURLConnection
 import com.google.common.io.ByteStreams
 import java.io.FileOutputStream
+import android.view.WindowManager
 
 /**
  * Extensions to the main activity for Android 3.0+, or at least it used to be.
@@ -79,6 +80,9 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 	override onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// keep screen on
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 		// setup actionbar
 		val ab = getSupportActionBar();
@@ -234,13 +238,21 @@ public class WebAppActivity extends BaseWebAppActivity {
 				return true;
 			}
 			case R.id.menu_share: {
-				var share = new Intent(Intent.ACTION_SEND)
-				share.setType("text/plain")
-				share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-				share.putExtra(Intent.EXTRA_SUBJECT, webapp.name);
-				share.putExtra(Intent.EXTRA_TEXT, wv.url);
-
-				startActivity(Intent.createChooser(share, getString(R.string.menu_share)));
+				var i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(wv.url));
+				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+				var chooser = Intent.createChooser(i, getString(R.string.title_open_with))
+				if (i.resolveActivity(getPackageManager()) != null) {
+					startActivity(chooser);
+				}
+//
+//				var share = new Intent(Intent.ACTION_SEND)
+//				share.setType("text/plain")
+//				share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+//				share.putExtra(Intent.EXTRA_SUBJECT, webapp.name);
+//				share.putExtra(Intent.EXTRA_TEXT, wv.url);
+//				startActivity(Intent.createChooser(share, getString(R.string.menu_share)));
 				return true;
 			}
 			case R.id.menu_shortcut: {
@@ -383,6 +395,19 @@ public class WebAppActivity extends BaseWebAppActivity {
 			].start()
 		} else {
 			unsavedFavicon = icon
+		}
+	}
+
+	override onFullscreenChanged(boolean isFullscreen) {
+		super.onFullscreenChanged(isFullscreen)
+
+		if (isFullscreen && supportActionBar.isShowing) {
+			// always hide the action bar in fullscreen (video) mode
+			supportActionBar.hide()
+		}
+		if (!isFullscreen && !settings.isHideActionbar && !settings.isFullHideActionbar) {
+			// un-hide the action bar when coming out of fullscreen
+			supportActionBar.show()
 		}
 	}
 
