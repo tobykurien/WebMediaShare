@@ -40,11 +40,11 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 			.setView(contentView) // contentView is the layout specified in the annotation
 			.setPositiveButton(android.R.string.ok, null) // to avoid it closing dialog
 			.setNegativeButton(android.R.string.cancel, null)
-			.setNeutralButton(R.string.btn_recommended_sites, [
-				var link = Uri.parse("https://github.com/tobykurien/WebApps/wiki/Recommended-Webapps")
-				WebClient.handleExternalLink(activity, link, true);
-				dismiss()
-			  ])
+			// .setNeutralButton(R.string.btn_recommended_sites, [
+			// 	var link = Uri.parse("https://github.com/tobykurien/WebMediaShare/wiki/Recommended-Webapps")
+			// 	WebClient.handleExternalLink(activity, link, true);
+			// 	dismiss()
+			//   ])
 			.create()
 	}
 
