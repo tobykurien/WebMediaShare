@@ -136,7 +136,6 @@ class WebClient extends WebViewClient {
 		mu.contentType = contentType
 		mu.contentLength = contentLength
 		mediaUrls.add(mu)
-		Log.d("WebClient", mediaUrls.toString)
 
 		// alert other components that we found a media URL
 		LocalBroadcastManager.getInstance(wv.context).sendBroadcast(new Intent
@@ -144,6 +143,11 @@ class WebClient extends WebViewClient {
 	}
 
 	def static handleExternalLink(Context activity, Uri uri, boolean openInExternalApp) {
+		handleExternalLink(activity, uri, openInExternalApp, true)
+	}
+
+	def static handleExternalLink(Context activity, Uri uri, boolean openInExternalApp,
+		boolean isFromWebapp) {
 		val domain = getRootDomain(uri.toString())
 		Log.d("url_loading", domain)
 		// first check if we have a saved webapp for this URI
@@ -159,14 +163,18 @@ class WebClient extends WebViewClient {
                 i.setData(uri)
                 activity.startActivity(i)
             } else {
-				Log.d("url_loading", "Ignoring URL as it is outside sandbox " + uri.toString)
-//                // open in new sandbox
-//                // delete all previous cookies
-//                CookieManager.instance.removeAllCookie()
-//                var i = new Intent(activity, WebAppActivity)
-//                i.action = Intent.ACTION_VIEW
-//                i.data = uri
-//                activity.startActivity(i)
+				if (isFromWebapp) {
+					// prevent webaps from opening popups or redirecting to other sites
+					Log.d("url_loading", "Ignoring URL as it is outside sandbox " + uri.toString)
+				} else {
+					// open in new sandbox
+					// delete all previous cookies
+					CookieManager.instance.removeAllCookie()
+					var i = new Intent(activity, WebAppActivity)
+					i.action = Intent.ACTION_VIEW
+					i.data = uri
+					activity.startActivity(i)
+				}
             }
 		} else {
 			if (webapps.length > 1) {

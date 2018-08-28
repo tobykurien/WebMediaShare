@@ -22,11 +22,9 @@
         );
         
         insert into webapps (name,url) values (\'SuperSport Highlights\',\'https://www.supersport.com/video/\');
-        insert into webapps (name,url) values (\'Reddit\',\'https://www.reddit.com\');
         insert into webapps (name,url) values (\'Radio.net\',\'https://www.radio.net\');
         insert into webapps (name,url) values (\'SoundCloud\',\'https://www.soundcloud.com\');
         insert into webapps (name,url) values (\'Mixcloud\',\'https://m.mixcloud.com\');
-        insert into webapps (name,url) values (\'Strikeout\',\'https://www.strikeout.nu\');
         insert into webapps (name,url) values (\'Twitch TV\',\'https://m.twitch.tv\');
     </string>
 

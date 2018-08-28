@@ -202,7 +202,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 			}
 			case R.id.menu_stop: {
 				if (stopMenu != null && !stopMenu.isChecked()) {
-					wv.reload();
+					wv.reload()
 				} else {
 					wv.stopLoading();
 				}

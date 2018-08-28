@@ -15,11 +15,9 @@ buildscript {
         classpath 'com.github.ksoichiro:gradle-eclipse-aar-plugin:0.2.0'
     }
 }
-
 apply plugin: 'com.android.application'
 apply plugin: 'org.xtext.android.xtend'
 apply plugin: 'com.github.ksoichiro.eclipse.aar'
-
 repositories {
     jcenter()
     // google()
@@ -27,7 +25,6 @@ repositories {
         url "https://maven.google.com"
     }
 }
-
 // Configure eclipse-aar plugin. To use:
 // $ gradle generateEclipseDependencies
 // then import generated projects into Eclipse
@@ -38,7 +35,6 @@ eclipseAar {
     cleanLibsDirectoryEnabled = true
     andmore = true
 }
-
 android {
     compileSdkVersion 27
     buildToolsVersion '26.0.2'
@@ -79,4 +75,7 @@ android {
     lintOptions {
         abortOnError false // because missing translations...
     }
+}
+
+dependencies {
 }

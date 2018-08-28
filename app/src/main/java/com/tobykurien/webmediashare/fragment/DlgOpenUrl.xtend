@@ -123,7 +123,7 @@ import com.tobykurien.webmediashare.webviewclient.WebClient
 				activity.startActivity(i)
 
 			} else {
-				WebClient.handleExternalLink(activity, uriFinal, false)
+				WebClient.handleExternalLink(activity, uriFinal, false, false)
 			}
 		].onError[ Exception error |
 			Log.e("dlgOpenUrl", "Error", error)
