@@ -1,0 +1,15 @@
+WebMediaShare is an app to browse your favourite media websites (e.g. online streaming sites, online radio stations, etc.) so that you can:
+
+    - view the content without ads/popups/redirects/etc.
+    - listen to music from a streaming site in a media player app like VLC, so that it continues playing even if the screen is off
+    - send the media to your TV or Hifi (e.g. via the Kore app for Kodi). This works like Chromecast.
+    - share the media URL to friends on chats or email
+    - share the media to an app for downloading
+
+WebMediaShare is a browser with the following features:
+
+    - Save your favourite media sites in-app
+    - Add shortcuts to the home screen so that they open like regular apps
+    - Ad blocking
+    - Prevents popups, popunders, and redirects
+    - intercepts media within web pages, allowing you to view and share them
