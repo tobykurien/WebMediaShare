@@ -20,6 +20,9 @@ WebMediaShare is a browser with the following features:
   - Prevents popups, popunders, and redirects
   - intercepts media within web pages, allowing you to view and share them
 
+<a href="https://f-droid.org/en/packages/com.tobykurien.webmediashare/" target="_blank">
+  <img src="images/fdroid.png" height="60"/>
+</a>
 
 Forked from https://github.com/tobykurien/WebApps
 
