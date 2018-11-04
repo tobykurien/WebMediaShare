@@ -29,6 +29,6 @@ Forked from https://github.com/tobykurien/WebApps
 Limitations
 ===========
 
-- Cookies and referer information is lost when sharing a media URL, so it may not work one some sites if the server requires these.
+- Cookies and referer information is lost when sharing a media URL, so it may not work on some sites if the server requires these.
 - Does not work well for sites like YouTube.com that stream their media in several chunked files
   - For YouTube in particular, use "Share URL" menu option to share to Kore. Your Kodi instance will need the YouTube plugin installed.
