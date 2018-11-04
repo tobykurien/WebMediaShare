@@ -378,6 +378,9 @@ public class WebAppActivity extends BaseWebAppActivity {
 			stopMenu.setIcon(R.drawable.ic_action_refresh);
 			stopMenu.setChecked(false);
 		}
+
+		// webview sometime misbehaves, so forcefully check for new urls
+		mediaUrlReceiver.onReceive(this, null)
 	}
 
 	override onReceivedFavicon(WebView view, Bitmap icon) {
@@ -580,11 +583,17 @@ public class WebAppActivity extends BaseWebAppActivity {
 
     def setCastMenuVisibility() {
         if (castMenu != null) {
+			var state = castMenu.visible
             if (wc?.mediaUrls != null) {
                 castMenu.visible = wc.mediaUrls.length > 0
             } else {
                 castMenu.visible = false
             }
+
+			if (state != castMenu.visible) {
+				// refresh the icons
+				getSupportActionBar.invalidateOptionsMenu()
+			}
         }
     }
 
