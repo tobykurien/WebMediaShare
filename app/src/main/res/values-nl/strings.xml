@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Web Media Share</string>
+    <string name="menu_site">Andere site</string>
+    <string name="menu_exit">Afsluiten</string>
+    <string name="menu_text_size">Lettergrootte</string>
+    <string name="menu_stop">Stoppen</string>
+    <string name="menu_refresh">Verversen</string>
+    <string name="menu_toggle_image">Afbeeldingen tonen/verbergen</string>
+    <string name="menu_cast">Media delen</string>
+    <string name="menu_settings">Instellingen</string>
+    <string name="menu_3rd_party">Externe domeinen</string>
+    <string name="menu_open_url">URL openen</string>
+    <string name="menu_save">Opslaan als webapp</string>
+    <string name="menu_share">URL delen</string>
+    <string name="menu_shortcut">Startscherm-snelkoppeling</string>
+    <string name="menu_user_agent">Gebruikersagent</string>
+    <string name="menu_certificate">Certificaat</string>
+
+    <string name="open_url_hint">website.nl</string>
+    <string name="open_url">URL openen</string>
+    <string name="err_invalid_url">Ongeldige url</string>
+
+    <string name="blocked_root_domains">Externe domeinnamen deblokkeren</string>
+    <string name="unblock">Deblokkeren</string>
+    <string name="title_save_webapp">Webapp opslaan</string>
+    <string name="msg_save_webapp">Wil je de huidige website opslaan als webapp?</string>
+    <string name="msg_saving_webapp">Bezig met opslaan</string>
+    <string name="msg_shortcut_added">Snelkoppeling toegevoegd</string>
+    <string name="btn_save">Opslaan</string>
+    <string name="webapp_name">Naam van webapp</string>
+    <string name="open_site">Website openen</string>
+    <string name="btn_recommended_sites">Aanbevolen</string>
+    <string name="btn_share_url">URL delen</string>
+    <string name="btn_share_stream">Stream delen</string>
+    <string name="delete_webapp">Wil je de webapp verwijderen?</string>
+    <string name="shortcut_label">Webapp-snelkoppeling</string>
+    <string name="err_webapp_not_found">Webapp niet gevonden</string>
+    <string name="title_open_with">Openen met</string>
+    <string name="title_share_media">Media delen</string>
+
+    <string name="title_certificate">Websitecertificaat</string>
+    <string name="title_cert_untrusted">Niet-vertrouwd certificaat</string>
+    <string name="title_cert_changed">Certificaat gewijzigd</string>
+    <string name="cert_accept">Certificaat accepteren</string>
+
+    <string name="action_tips">Tips</string>
+    <string name="tips"><![CDATA[
+        <p><b>Webapps toevoegen</b>: voeg een web app toe door de website in kwestie te openen en te drukken op de actie 'Opslaan als webapp'</p>
+        <p><b>Casten</b>: druk op het castpictogram om media te delen met andere apps op je tv, zoals VLC of Kodi-afstandsbediening (Kore)</p>
+        <p><b>Startscherm-snelkoppelingen</b>: houdt je startscherm lang ingedrukt en ga naar de widgets-pagina om een webapp-snelkoppeling toe te voegen aan je startscherm</p>
+]]></string>
+    <string name="btn_website">Broncode</string>
+
+    <string name="toast_images_enabled">Afbeeldingen laden ingeschakeld</string>
+    <string name="toast_images_disabled">Afbeeldingen laden uitgeschakeld</string>
+    <string name="progress_opening_site">Bezig met openen van webapp...</string>
+    <string name="open_new_sandbox">Openen in nieuwe sandbox</string>
+
+    <!-- Preferences activity strings -->
+    <string name="title_3rd_party">Externe verzoeken blokkeren</string>
+    <string name="summary_3rd_party">Laad geen afbeeldingen en scripts van buiten webapp-domeinen</string>
+    <string name="title_font_size">Lettergrootte</string>
+    <string name="summary_font_size">Pas de lettergrootte aan</string>
+    <string name="title_user_agent">Gebruikersagent</string>
+    <string name="summary_user_agent">Bepaalt hoe websites moeten worden getoond</string>
+    <string name="title_fullscreen">Volledig scherm</string>
+    <string name="summary_fullscreen">Verberg de statusbalk (herstart vereist)</string>
+    <string name="title_fullscreen_immersive">Beeldvullend</string>
+    <string name="summary_fullscreen_immersive">Verberg alle systeemcomponenten in de beeldvullende modus</string>
+    <string name="title_autohide">Actiebalk automatisch verbergen</string>
+    <string name="summary_autohide">Verberg de actiebalk als je omlaag scrollt en toon deze weer als je omhoog scrollt</string>
+    <string name="title_hide_actionbar">Actiebalk verbergen</string>
+    <string name="summary_hide_actionbar">Verberg de actiebalk volledig - houdt een leeg gebied lang ingedrukt om in en uit te schakelen</string>
+    <string name="title_shortcut_actionbar">Alleen verbergen in snelkoppelingen</string>
+    <string name="summary_shortcut_actionbar">Verberg de actiebalk alleen indien gestart middels een snelkoppeling</string>
+</resources>
