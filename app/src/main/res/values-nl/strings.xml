@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Web Media Share</string>
     <string name="menu_site">Andere site</string>
     <string name="menu_exit">Afsluiten</string>
     <string name="menu_text_size">Lettergrootte</string>
@@ -46,7 +45,7 @@
 
     <string name="action_tips">Tips</string>
     <string name="tips"><![CDATA[
-        <p><b>Webapps toevoegen</b>: voeg een web app toe door de website in kwestie te openen en te drukken op de actie 'Opslaan als webapp'</p>
+        <p><b>Webapps toevoegen</b>: voeg een web app toe door de website in kwestie te openen en te drukken op de actie \'Opslaan als webapp\'</p>
         <p><b>Casten</b>: druk op het castpictogram om media te delen met andere apps op je tv, zoals VLC of Kodi-afstandsbediening (Kore)</p>
         <p><b>Startscherm-snelkoppelingen</b>: houdt je startscherm lang ingedrukt en ga naar de widgets-pagina om een webapp-snelkoppeling toe te voegen aan je startscherm</p>
 ]]></string>
