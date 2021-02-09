@@ -106,19 +106,28 @@ public class WebAppActivity extends BaseWebAppActivity {
 		wv.onLongClickListener = [
 			var url = wv.hitTestResult.extra
 
-			if (wv.hitTestResult.type == WebView.HitTestResult.UNKNOWN_TYPE) {
+			if (wv.hitTestResult.type == WebView.HitTestResult.UNKNOWN_TYPE ||
+				wv.hitTestResult.type == WebView.HitTestResult.SRC_ANCHOR_TYPE ||
+				wv.hitTestResult.type == WebView.HitTestResult.IMAGE_TYPE ||
+				wv.hitTestResult.type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
 				val Message message = new Message();
 			    message.setTarget(new Handler()[msg|
-			        var String href = msg.getData().getString("href");
+			        var String title = msg.getData().getString("title");
+					if (title === null) title = msg.getData().getString("alt");
+					if (title === null) title = webapp.name;
+
+			        var String href = msg.getData().getString("url");
+					if (href === null) href = msg.getData().getString("href");
 					if (href === null) href = msg.getData().getString("src");
+
 					if (href !== null) {
-						shareURL(href, webapp.name)
+						shareURL(href, title);
 						return true;
 					}
 				]);
     			wv.requestFocusNodeHref(message);
 			} else if (url !== null) {
-				shareURL(url, webapp.name)
+				shareURL(url, webapp.name);
 				return true;
 			}
 			
