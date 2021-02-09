@@ -112,7 +112,6 @@ public class WebAppActivity extends BaseWebAppActivity {
 			        var String href = msg.getData().getString("src");
 					if (href === null) href = msg.getData().getString("href");
 					if (href !== null) {
-						toast("GOT URL " + href)
 						var i = new Intent(Intent.ACTION_VIEW);
 						i.setData(Uri.parse(href));
 						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
