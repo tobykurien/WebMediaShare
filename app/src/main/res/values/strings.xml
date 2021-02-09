@@ -38,6 +38,7 @@
     <string name="err_webapp_not_found">Webapp not found</string>
     <string name="title_open_with">Open With</string>
     <string name="title_share_media">Share Media</string>
+    <string name="popup_blocked">Popup Blocked</string>
 
     <string name="title_certificate">Website Certificate</string>
     <string name="title_cert_untrusted">Untrusted Certificate</string>

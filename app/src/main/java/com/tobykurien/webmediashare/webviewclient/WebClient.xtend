@@ -33,11 +33,11 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
 import java.util.Set
+import java.io.BufferedReader
 
 import static org.xtendroid.utils.AsyncBuilder.*
-
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
-import java.io.BufferedReader
+import static extension org.xtendroid.utils.AlertUtils.*
 
 class WebClient extends WebViewClient {
 	public static val UNKNOWN_HOST = "999.999.999.999" // impossible hostname to avoid vuln
@@ -165,6 +165,7 @@ class WebClient extends WebViewClient {
             } else {
 				if (isFromWebapp) {
 					// prevent webaps from opening popups or redirecting to other sites
+					activity.toast(activity.getString(R.string.popup_blocked))
 					Log.d("url_loading", "Ignoring URL as it is outside sandbox " + uri.toString)
 				} else {
 					// open in new sandbox
