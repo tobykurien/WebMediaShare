@@ -343,28 +343,6 @@ public class WebAppActivity extends BaseWebAppActivity {
 			db.saveCookies(webapp)
 		}
 
-		// alert the user if SSL certificate has changed since last time
-		// TODO - security issue: if this is MITM, cookies already sent!
-//		if (webapp != null && wv.certificate != null) {
-//			if (webapp.certIssuedBy != null) {
-//				if (CertificateUtils.compare(webapp, wv.certificate) != 0) {
-//					// SSL certificate changed!
-//					var dlg = new DlgCertificateChanged(webapp, wv.certificate,
-//						getString(R.string.title_cert_changed),
-//						getString(R.string.cert_accept), [
-//							CertificateUtils.updateCertificate(webapp, wv.certificate, db)
-//							true
-//						], [
-//							finish
-//							true
-//						])
-//					dlg.show(supportFragmentManager, "certificate")
-//				}
-//			} else {
-//				CertificateUtils.updateCertificate(webapp, wv.certificate, db)
-//			}
-//		}
-
 		if (stopMenu != null) {
 			stopMenu.setTitle(R.string.menu_refresh);
 			stopMenu.setIcon(R.drawable.ic_action_refresh);
@@ -373,6 +351,14 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 		// webview sometime misbehaves, so forcefully check for new urls
 		mediaUrlReceiver.onReceive(this, null)
+
+		// and sometimes it takes a while for URLs to register
+		for (var i=0; i < 20; i++) async [
+			Thread.sleep(500)
+			return true
+		].then[
+			mediaUrlReceiver.onReceive(this, null)
+		]
 	}
 
 	override onReceivedFavicon(WebView view, Bitmap icon) {
