@@ -109,30 +109,16 @@ public class WebAppActivity extends BaseWebAppActivity {
 			if (wv.hitTestResult.type == WebView.HitTestResult.UNKNOWN_TYPE) {
 				val Message message = new Message();
 			    message.setTarget(new Handler()[msg|
-			        var String href = msg.getData().getString("src");
-					if (href === null) href = msg.getData().getString("href");
+			        var String href = msg.getData().getString("href");
+					if (href === null) href = msg.getData().getString("src");
 					if (href !== null) {
-						var i = new Intent(Intent.ACTION_VIEW);
-						i.setData(Uri.parse(href));
-						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-						var chooser = Intent.createChooser(i, getString(R.string.title_open_with))
-						if (i.resolveActivity(getPackageManager()) != null) {
-							context.startActivity(chooser);
-						}
+						shareURL(href, webapp.name)
 						return true;
 					}
 				]);
     			wv.requestFocusNodeHref(message);
 			} else if (url !== null) {
-				var i = new Intent(Intent.ACTION_VIEW);
-				i.setData(Uri.parse(url));
-				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-				var chooser = Intent.createChooser(i, getString(R.string.title_open_with))
-				if (i.resolveActivity(getPackageManager()) != null) {
-				    context.startActivity(chooser);
-				}
+				shareURL(url, webapp.name)
 				return true;
 			}
 			
@@ -258,21 +244,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 				return true;
 			}
 			case R.id.menu_share: {
-				var i = new Intent(Intent.ACTION_VIEW);
-				i.setData(Uri.parse(wv.url));
-				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-				var chooser = Intent.createChooser(i, getString(R.string.title_open_with))
-				if (i.resolveActivity(getPackageManager()) != null) {
-					startActivity(chooser);
-				}
-//
-//				var share = new Intent(Intent.ACTION_SEND)
-//				share.setType("text/plain")
-//				share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-//				share.putExtra(Intent.EXTRA_SUBJECT, webapp.name);
-//				share.putExtra(Intent.EXTRA_TEXT, wv.url);
-//				startActivity(Intent.createChooser(share, getString(R.string.menu_share)));
+				shareURL(wv.url, webapp.name)
 				return true;
 			}
 			case R.id.menu_shortcut: {
@@ -651,4 +623,13 @@ public class WebAppActivity extends BaseWebAppActivity {
 		val taskDesc = new TaskDescription(webapp.name, BitmapFactory.decodeFile(favIcon.absolutePath), colour);
 		setTaskDescription(taskDesc);
 	}	
+
+	def shareURL(String shareUrl, String shareTitle) {
+		var share = new Intent(Intent.ACTION_SEND)
+		share.setType("text/plain")		
+		share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+		share.putExtra(Intent.EXTRA_SUBJECT, shareTitle);
+		share.putExtra(Intent.EXTRA_TEXT, shareUrl);
+		startActivity(Intent.createChooser(share, getString(R.string.menu_share)));
+	}
 }
