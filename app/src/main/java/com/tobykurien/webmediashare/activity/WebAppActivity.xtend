@@ -6,9 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.graphics.drawable.ColorDrawable
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v7.app.AlertDialog
@@ -23,6 +25,8 @@ import android.view.ViewConfiguration
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.widget.ImageView
+import android.os.Message
+import android.os.Handler
 import com.tobykurien.webmediashare.R
 import com.tobykurien.webmediashare.adapter.WebappsAdapter
 import com.tobykurien.webmediashare.data.MediaUrl
@@ -37,6 +41,7 @@ import com.tobykurien.webmediashare.webviewclient.WebViewUtils
 import java.util.ArrayList
 import java.util.List
 import java.util.Set
+import android.app.ActivityManager.TaskDescription;
 
 import static extension org.xtendroid.utils.AsyncBuilder.*
 import static extension com.tobykurien.webmediashare.utils.Dependencies.*
@@ -71,6 +76,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 	var private MenuItem castMenu = null;
 	var private MenuItem shortcutMenu = null;
 	var private Bitmap unsavedFavicon = null;
+	val iconHandler = new FaviconHandler(this)
 
 	val mediaUrlReceiver = new BroadcastReceiver() {
 		override onReceive(Context context, Intent intent) {
@@ -99,7 +105,27 @@ public class WebAppActivity extends BaseWebAppActivity {
 
 		wv.onLongClickListener = [
 			var url = wv.hitTestResult.extra
-			if (url !== null) {
+
+			if (wv.hitTestResult.type == WebView.HitTestResult.UNKNOWN_TYPE) {
+				val Message message = new Message();
+			    message.setTarget(new Handler()[msg|
+			        var String href = msg.getData().getString("src");
+					if (href === null) href = msg.getData().getString("href");
+					if (href !== null) {
+						toast("GOT URL " + href)
+						var i = new Intent(Intent.ACTION_VIEW);
+						i.setData(Uri.parse(href));
+						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+						var chooser = Intent.createChooser(i, getString(R.string.title_open_with))
+						if (i.resolveActivity(getPackageManager()) != null) {
+							context.startActivity(chooser);
+						}
+						return true;
+					}
+				]);
+    			wv.requestFocusNodeHref(message);
+			} else if (url !== null) {
 				var i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
 				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -115,13 +141,8 @@ public class WebAppActivity extends BaseWebAppActivity {
 		]
 
 		// load a favico if it already exists
-		val iconImg = supportActionBar.customView.findViewById(R.id.favicon) as ImageView;
-		iconImg.imageResource = R.drawable.ic_action_site
-		val iconHandler = new FaviconHandler(this)
-		WebappsAdapter.loadFavicon(this, iconHandler.getFavIcon(webappId), iconImg)
-		iconHandler.deleteFavIcon(webappId)
-
-
+		val favIcon = iconHandler.getFavIcon(webapp.id)
+		updateActionBar(favIcon)
 
 		downloadAdblockList()
 	}
@@ -615,4 +636,20 @@ public class WebAppActivity extends BaseWebAppActivity {
 			].start()
 		}
 	}
+
+	def updateActionBar(File favIcon) {
+		val iconImg = supportActionBar.customView.findViewById(R.id.favicon) as ImageView;
+		iconImg.imageResource = R.drawable.ic_action_site
+		WebappsAdapter.loadFavicon(this, favIcon, iconImg)
+		val colour = FaviconHandler.getDominantColor(favIcon)
+		supportActionBar.backgroundDrawable = new ColorDrawable(colour)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		    val window = getWindow();
+		    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+		    window.setStatusBarColor(colour);
+		}	
+
+		val taskDesc = new TaskDescription(webapp.name, BitmapFactory.decodeFile(favIcon.absolutePath), colour);
+		setTaskDescription(taskDesc);
+	}	
 }
