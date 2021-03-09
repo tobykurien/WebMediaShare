@@ -17,14 +17,16 @@ WebMediaShare is a browser with the following features:
   - Save your favourite media sites in-app
   - Add shortcuts to the home screen so that they open like regular apps
   - Ad blocking
-  - Prevents popups, popunders, and redirects
+  - Prevents popups, pop-unders, and redirects (i.e. works well with sports and other live streaming sites)
   - intercepts media within web pages, allowing you to view and share them
+
+Forked from WebApps [https://github.com/tobykurien/WebApps](https://github.com/tobykurien/WebApps), which is a more privacy-oriented app that works well for social media and other web apps.
 
 <a href="https://f-droid.org/en/packages/com.tobykurien.webmediashare/" target="_blank">
   <img src="images/fdroid.png" height="60"/>
 </a>
 
-Forked from https://github.com/tobykurien/WebApps
+[Get the APK from releases](https://github.com/tobykurien/WebMediaShare/releases)
 
 Limitations
 ===========
@@ -32,3 +34,5 @@ Limitations
 - Cookies and referer information is lost when sharing a media URL, so it may not work on some sites if the server requires these.
 - Casting does not work well for sites like YouTube.com that stream their media in several chunked files
   - For YouTube in particular, use "Share URL" menu option to share to Kore. Your Kodi instance will need the YouTube plugin installed.
+  - Another alternative is to use an [Invidious](https://github.com/iv-org/invidious) instance for YouTube, which works well and removes some YouTube restrictions and allows even streaming just the audio or video independently.
+- Casting may not work on sites that implement DRM, e.g. F1TV or Strikeout
