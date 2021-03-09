@@ -245,7 +245,11 @@ class WebClient extends WebViewClient {
 						con.setRequestProperty("User-Agent", activity.settings.userAgent)
 					}
 					val ret = #[ con.getContentType(), con.getContentLength() as long, con.getURL() ]
-					con.inputStream.close()
+					try { 
+						con.inputStream.close()
+					} catch (Exception e) {
+						// ignore close error
+					}
 					return ret
 				].then[ List result |
 					val contentType = result.get(0) as String

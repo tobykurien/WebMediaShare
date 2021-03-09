@@ -367,6 +367,7 @@ public class WebAppActivity extends BaseWebAppActivity {
 			return true
 		].then[
 			mediaUrlReceiver.onReceive(this, null)
+			setCastMenuVisibility()
 		]
 	}
 
