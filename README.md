@@ -1,6 +1,8 @@
 WebMediaShare - web media your way!
 =============
 
+**DEPRECTATED**: This project is no longer maintained. Reasons are explained in [this issue](https://github.com/tobykurien/WebApps/issues/253)
+
 ![Main screen](images/wms1.png) ![Viewing media](images/wms2.png) ![Sharing media](images/wms3.png)
 
 
